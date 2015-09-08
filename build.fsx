@@ -32,11 +32,11 @@ let project = "LFEG"
 
 // Short summary of the project
 // (used as description in AssemblyInfo and as a short summary for NuGet package)
-let summary = "LFEG - Lighting Fast Excel Generator, framework for efficient generation of excel files"
+let summary = "LFEG - Lighting Fast Excel Generator, a framework for efficient generation of excel files"
 
 // Longer description of the project
 // (used as a description for NuGet package; line breaks are automatically cleaned up)
-let description = "LFEG - Lighting Fast Excel Generator, framework for very fast and efficient generation of excel files with a lot of data"
+let description = "LFEG - Lighting Fast Excel Generator, a framework for very fast and efficient generation of excel files with a lot of data"
 
 // List of author names (for NuGet package)
 let authors = [ "Vasili Puchko" ]

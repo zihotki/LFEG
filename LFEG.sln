@@ -1,6 +1,7 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{63297B98-5CED-492C-A5B7-A5B4F73CF142}"
 	ProjectSection(SolutionItems) = preProject
 		paket.dependencies = paket.dependencies
@@ -8,8 +9,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{63297B
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{A6A6AF7D-D6E3-442D-9B1E-58CC91879BE1}"
-EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "LFEG", "src\LFEG\LFEG.fsproj", "{68CD63A0-D73A-45A4-BDC2-4C95620AEC7F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "project", "project", "{BF60BC93-E09B-4E5F-9D85-95A519479D54}"
 	ProjectSection(SolutionItems) = preProject
@@ -34,20 +33,34 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{ED8079DD
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "LFEG.Tests", "tests\LFEG.Tests\LFEG.Tests.fsproj", "{8AFDA0CE-877B-446D-96B4-8B452E0C7264}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LFEG", "src\LFEG\LFEG.csproj", "{0D09F60C-D5BD-4FD4-96C4-57F7CE00683E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LFEG.Mvc", "src\LFEG.Mvc\LFEG.Mvc.csproj", "{FD040DFA-60DB-4AD5-958E-A172CB0AA7AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LFEG.Sample", "src\LFEG.Sample\LFEG.Sample.csproj", "{8D70FF0C-9D6F-4DED-AD3F-549FCF654764}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{68CD63A0-D73A-45A4-BDC2-4C95620AEC7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{68CD63A0-D73A-45A4-BDC2-4C95620AEC7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{68CD63A0-D73A-45A4-BDC2-4C95620AEC7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{68CD63A0-D73A-45A4-BDC2-4C95620AEC7F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8AFDA0CE-877B-446D-96B4-8B452E0C7264}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8AFDA0CE-877B-446D-96B4-8B452E0C7264}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8AFDA0CE-877B-446D-96B4-8B452E0C7264}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8AFDA0CE-877B-446D-96B4-8B452E0C7264}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D09F60C-D5BD-4FD4-96C4-57F7CE00683E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D09F60C-D5BD-4FD4-96C4-57F7CE00683E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D09F60C-D5BD-4FD4-96C4-57F7CE00683E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D09F60C-D5BD-4FD4-96C4-57F7CE00683E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD040DFA-60DB-4AD5-958E-A172CB0AA7AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD040DFA-60DB-4AD5-958E-A172CB0AA7AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD040DFA-60DB-4AD5-958E-A172CB0AA7AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD040DFA-60DB-4AD5-958E-A172CB0AA7AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D70FF0C-9D6F-4DED-AD3F-549FCF654764}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D70FF0C-9D6F-4DED-AD3F-549FCF654764}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D70FF0C-9D6F-4DED-AD3F-549FCF654764}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D70FF0C-9D6F-4DED-AD3F-549FCF654764}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
