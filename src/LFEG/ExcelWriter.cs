@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 
 namespace LFEG
@@ -9,16 +8,15 @@ namespace LFEG
         private readonly IXmlEncoder _xmlEncoder;
         private readonly Dictionary<int, string> _columnNamesCache = new Dictionary<int, string>();
 
-        public ExcelWriter( IXmlEncoder xmlEncoder = null)
+        public ExcelWriter(IXmlEncoder xmlEncoder)
         {
-            _xmlEncoder = xmlEncoder ?? new XmlEncoder();
+            _xmlEncoder = xmlEncoder;
         }
 
         public virtual void WriteXmlHeader(StreamWriter writer)
         {
             writer.Write(@"<?xml version=""1.0"" encoding=""utf-8"" ?>");
-            writer.Write(
-                @"<worksheet xmlns:r=""http://schemas.openxmlformats.org/officeDocument/2006/relationships"" xmlns=""http://schemas.openxmlformats.org/spreadsheetml/2006/main"">");
+            writer.Write(@"<worksheet xmlns:r=""http://schemas.openxmlformats.org/officeDocument/2006/relationships"" xmlns=""http://schemas.openxmlformats.org/spreadsheetml/2006/main"">");
         }
 
         public virtual void WriteXmlFooter(StreamWriter writer)
@@ -26,7 +24,7 @@ namespace LFEG
             writer.Write("</worksheet>");
         }
 
-        public virtual void WriteColumnsDefinitions(StreamWriter writer, ExcelColumn[] columns)
+        public virtual void WriteColumnsDefinitions<T>(StreamWriter writer, ExcelColumn<T>[] columns)
         {
             const string colStrFormat = "<col min=\"{0}\" max=\"{0}\" width=\"25\" customWidth=\"1\" />";
             writer.Write("<cols>");
@@ -39,7 +37,7 @@ namespace LFEG
             writer.Write("</cols>");
         }
 
-        public virtual void WriteRows(StreamWriter writer, IEnumerable items, ExcelColumn[] columns)
+        public virtual void WriteRows<T>(StreamWriter writer, IEnumerable<T> items, ExcelColumn<T>[] columns)
         {
             var row = 2;
             var cols = columns.Length;
@@ -69,7 +67,7 @@ namespace LFEG
             }
         }
 
-        public virtual void WriteTitleRow(StreamWriter writer, ExcelColumn[] columns)
+        public virtual void WriteTitleRow<T>(StreamWriter writer, ExcelColumn<T>[] columns)
         {
             writer.Write("<row r=\"{0}\" >", 1);
 

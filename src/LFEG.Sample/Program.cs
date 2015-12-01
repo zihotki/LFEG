@@ -4,8 +4,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LFEG.Sample
 {
@@ -13,13 +11,13 @@ namespace LFEG.Sample
     {
         private static void Main(string[] args)
         {
-            var generator = new ExcelFileGenerator(new ExcelColumnFactory(new IExcelColumnDataInitializerVisitor[]
-            {
-                new BooleanYesNoDataInitializerVisitor(),
-                new DateTimeDataInitializerVisitor(),
-            }
-                .Concat(ExcelColumnFactory.DefaultDataInitializerVisitors)
-                .ToArray()));
+            // we can reuse settings so it's a good candidate to be put into DI container
+            var builder = ExcelFileGeneratorSettings.Create()
+                .AddDefaultColumnVisitors()
+                .AddColumnVisitor<BooleanYesNoDataProviderVisitor>()
+                .AddColumnVisitor<DateTimeDataProviderVisitor>();
+
+            var generator = builder.CreateGenerator();
 
             var data = GenerateData().ToArray();
 
@@ -40,7 +38,7 @@ namespace LFEG.Sample
 
         private static IEnumerable<Model> GenerateData()
         {
-            for (var i = 0; i < 5000; i++)
+            for (var i = 0; i < 1000000; i++)
             {
                 yield return new Model
                 {

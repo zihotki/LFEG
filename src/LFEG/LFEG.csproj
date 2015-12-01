@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>LFEG</RootNamespace>
     <AssemblyName>LFEG</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -20,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -28,6 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -39,12 +42,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExcelFileGeneratorSettings.cs" />
     <Compile Include="DataReaderEnumerator.cs" />
     <Compile Include="ExcelColumn.cs" />
-    <Compile Include="ExcelColumnDataInitializerVisitors\DefaultStringDataInitializerVisitor.cs" />
-    <Compile Include="ExcelColumnDataInitializerVisitors\EnumDataInitializerVisitor.cs" />
-    <Compile Include="IExcelColumnDataInitializerVisitor.cs" />
-    <Compile Include="ExcelColumnDataInitializerVisitors\NumericDataInitializerVisitor.cs" />
+    <Compile Include="DataProviderVisitors\DefaultStringDataProviderVisitor.cs" />
+    <Compile Include="DataProviderVisitors\EnumDataProviderVisitor.cs" />
+    <Compile Include="IDataProviderVisitor.cs" />
+    <Compile Include="DataProviderVisitors\NumericDataProviderVisitor.cs" />
     <Compile Include="ExcelColumnFactory.cs" />
     <Compile Include="ExcelDataTypes.cs" />
     <Compile Include="ExcelFileGenerator.cs" />

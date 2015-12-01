@@ -2,9 +2,9 @@
 
 namespace LFEG.ExcelColumnDataInitializerVisitors
 {
-    public class DefaultStringDataInitializerVisitor : IExcelColumnDataInitializerVisitor
+    public class DefaultStringDataProviderVisitor : IDataProviderVisitor
     {
-        public bool Visit(ExcelColumn column, Type dataType, Func<object, object> dataProvider)
+        public bool Visit<T>(ExcelColumn<T> column, Type dataType, Func<T, object> dataProvider)
         {
             column.ExcelDataType = ExcelDataTypes.String;
 

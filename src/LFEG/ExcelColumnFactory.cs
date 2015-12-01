@@ -1,65 +1,65 @@
 ﻿using System;
 using System.Data;
+using System.Linq.Expressions;
 using System.Reflection;
-using LFEG.ExcelColumnDataInitializerVisitors;
 
 namespace LFEG
 {
     public class ExcelColumnFactory
     {
-        public static IExcelColumnDataInitializerVisitor[] DefaultDataInitializerVisitors =
+        protected IDataProviderVisitor[] DataProviderVisitors;
+
+        // we need new visitor instances for each new 
+        protected internal ExcelColumnFactory(IDataProviderVisitor[] visitors)
         {
-            new EnumDataInitializerVisitor(),
-            new NumericDataInitializerVisitor(),
-            new DefaultStringDataInitializerVisitor(),
-        };
+            DataProviderVisitors = visitors;
+        }
         
-        protected IExcelColumnDataInitializerVisitor[] DataInitializerVisitors;
-
-        public ExcelColumnFactory(IExcelColumnDataInitializerVisitor[] visitors = null)
+        public virtual ExcelColumn<T> CreatePropertyColumn<T>(PropertyInfo propertyInfo)
         {
-            DataInitializerVisitors = visitors ?? DefaultDataInitializerVisitors;
-        }
-
-        public virtual ExcelColumn CreatePropertyColumn(PropertyInfo property)
-        {
-            var column = new ExcelColumn
+            var column = new ExcelColumn<T>
             {
-                Caption = TypeHelper.GetCaption(property)
+                Caption = TypeHelper.GetCaption(propertyInfo)
             };
 
-            InitializeForDataType(column, property.PropertyType, property.GetValue);
+            var instance = Expression.Parameter(propertyInfo.DeclaringType, "i");
+            var property = Expression.Property(instance, propertyInfo);
+            var convert = Expression.TypeAs(property, typeof(object));
+
+            var propertyAccessor = (Func<T, object>)Expression.Lambda(convert, instance).Compile();
+            
+            InitializeForDataType(column, propertyInfo.PropertyType, propertyAccessor);
 
             return column;
         }
 
-        public virtual ExcelColumn CreateDataReaderColumn(DataColumn dataColumn, int index)
+        public virtual ExcelColumn<IDataReader> CreateDataReaderColumn(DataColumn dataColumn, int index)
         {
-            var column = new ExcelColumn
-            {
-                Caption = TypeHelper.GetCaption(dataColumn),
-            };
-
-            InitializeForDataType(column, dataColumn.DataType, r => ((IDataReader)r)[index]);
-
-            return column;
-        }
-
-        public virtual ExcelColumn CreateDataTableColumn(DataColumn dataColumn, int index)
-        {
-            var column = new ExcelColumn
+            var column = new ExcelColumn<IDataReader>
             {
                 Caption = TypeHelper.GetCaption(dataColumn),
             };
 
-            InitializeForDataType(column, dataColumn.DataType, r => ((DataRow)r)[index]);
+            InitializeForDataType(column, dataColumn.DataType, r => r[index]);
 
             return column;
         }
 
-        protected virtual void InitializeForDataType(ExcelColumn column, Type dataType, Func<object, object> dataProvider)
+        public virtual ExcelColumn<DataRow> CreateDataTableColumn(DataColumn dataColumn, int index)
         {
-            foreach (var visitor in DataInitializerVisitors)
+            var column = new ExcelColumn<DataRow>
+            {
+                Caption = TypeHelper.GetCaption(dataColumn),
+            };
+
+            InitializeForDataType(column, dataColumn.DataType, r => r[index]);
+
+            return column;
+        }
+
+        protected virtual void InitializeForDataType<T>(ExcelColumn<T> column, Type dataType, Func<T, object> dataProvider)
+        {
+            foreach (var visitor in DataProviderVisitors)
             {
                 if (visitor.Visit(column, dataType, dataProvider))
                     return;

@@ -2,9 +2,9 @@
 
 namespace LFEG.Sample
 {
-    public class DateTimeDataInitializerVisitor : IExcelColumnDataInitializerVisitor
+    public class DateTimeDataProviderVisitor : IDataProviderVisitor
     {
-        public bool Visit(ExcelColumn column, Type dataType, Func<object, object> dataProvider)
+        public bool Visit<T>(ExcelColumn<T> column, Type dataType, Func<T, object> dataProvider)
         {
             if (!IsDateType(dataType))
                 return false;

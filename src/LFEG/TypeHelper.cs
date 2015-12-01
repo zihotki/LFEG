@@ -46,59 +46,19 @@ namespace LFEG
 
         public static string GetCaption(PropertyInfo property)
         {
-            /*var displayAttribute = property.GetCustomAttribute<DisplayAttribute>();
-            if (displayAttribute != null)
-            {
-                return displayAttribute.Name;
-            }*/
-
-            var displayNameAttribute = property.GetCustomAttribute<DisplayNameAttribute>();
+            var displayNameAttribute = (DisplayNameAttribute)Attribute.GetCustomAttribute(property, typeof(DisplayNameAttribute));
             if (displayNameAttribute != null)
             {
                 return displayNameAttribute.DisplayName;
             }
 
-            var descriptionAttribute = property.GetCustomAttribute<DescriptionAttribute>();
+            var descriptionAttribute = (DescriptionAttribute)Attribute.GetCustomAttribute(property, typeof(DescriptionAttribute));
             if (descriptionAttribute != null)
             {
                 return descriptionAttribute.Description;
             }
 
             return property.Name;
-        }
-
-
-        public static string GetValueCaption(Type enumType, object value)
-        {
-            if (value == null)
-            {
-                return string.Empty;
-            }
-
-            if (enumType == null)
-            {
-                return string.Empty;
-            }
-
-            enumType = Nullable.GetUnderlyingType(enumType) ?? enumType;
-
-            var name = Enum.GetName(enumType, value);
-            if (string.IsNullOrEmpty(name))
-            {
-                return string.Empty;
-            }
-
-            var fi = enumType.GetField(name);
-
-            var descriptionAttributes = (DescriptionAttribute[])fi.GetCustomAttributes(typeof(DescriptionAttribute), false);
-            if (descriptionAttributes.Length > 0)
-            {
-                return descriptionAttributes[0].Description;
-            }
-
-            name = Regex.Replace(name, "([a-z](?=[A-Z])|[A-Z](?=[A-Z][a-z]))", "$1 ").TrimEnd();
-
-            return name;
         }
     }
 }

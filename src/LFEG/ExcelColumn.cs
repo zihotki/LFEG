@@ -2,12 +2,12 @@ using System;
 
 namespace LFEG
 {
-    public class ExcelColumn
+    public class ExcelColumn<T>
     {
         public string Caption { get; set; }
 
         public string ExcelDataType { get; set; }
 
-        public Func<object, string> DataProvider { get; set; }
+        public Func<T, string> DataProvider { get; set; }
     }
 }

@@ -8,19 +8,21 @@ namespace LFEG.Mvc
 {
     public abstract class ExcelFileResultBase : FileResult
     {
+        private readonly ExcelFileGeneratorSettings _settings;
         protected string FileName;
 
-        protected ExcelFileResultBase(string fileName = "Output")
+        protected ExcelFileResultBase(ExcelFileGeneratorSettings settings, string fileName = "Output")
             : base("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
         {
+            _settings = settings;
             FileName = fileName;
         }
 
         protected override void WriteFile(HttpResponseBase response)
         {
-            response.AddHeader("content-disposition", string.Format("attachment;  filename={0}.xlsx", FileName));
+            response.AddHeader("content-disposition", $"attachment;  filename={FileName}.xlsx");
 
-            var generator = new ExcelFileGenerator();
+            var generator = _settings.CreateGenerator();
             GenerateExcelFile(generator, response.OutputStream);
         }
 
@@ -31,8 +33,8 @@ namespace LFEG.Mvc
     {
         private readonly IEnumerable<T> _data;
 
-        public ExcelFileResult(IEnumerable<T> data, string fileName = "Output")
-            : base(fileName)
+        public ExcelFileResult(ExcelFileGeneratorSettings settings, IEnumerable<T> data, string fileName = "Output")
+            : base(settings, fileName)
         {
             _data = data;
         }
@@ -47,8 +49,8 @@ namespace LFEG.Mvc
     {
         private readonly DataTable _table;
 
-        public ExcelFileResult(DataTable table, string fileName = "Output")
-            : base(fileName)
+        public ExcelFileResult(ExcelFileGeneratorSettings settings, DataTable table, string fileName = "Output")
+            : base(settings, fileName)
         {
             _table = table;
         }
