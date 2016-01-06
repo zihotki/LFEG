@@ -3,26 +3,35 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using Ionic.Zip;
 using Ionic.Zlib;
+using LFEG.Infrastructure;
+using LFEG.Infrastructure.Writers;
 
 namespace LFEG
 {
     public class ExcelFileGenerator
     {
-        private readonly ExcelWriter _writer;
+        private readonly IWorksheetWriter _worksheetWriter;
+        private readonly ISharedStringsWriter _sharedStringsWriter;
+        private readonly IStylesWriter _stylesWriter;
         private readonly Stream _templateStream;
         private readonly CompressionStrategy _compressionStrategy;
         private readonly CompressionLevel _compressionLevel;
         private readonly ExcelColumnFactory _factory;
 
-        public ExcelFileGenerator(ExcelColumnFactory factory, ExcelWriter writer, Stream templateStream, 
-            CompressionStrategy compressionStrategy, CompressionLevel compressionLevel)
+        public ExcelFileGenerator(ExcelColumnFactory factory, 
+            IWorksheetWriter worksheetWriter,
+            ISharedStringsWriter sharedStringsWriter,
+            IStylesWriter stylesWriter,
+            Stream templateStream, 
+            CompressionStrategy compressionStrategy, 
+            CompressionLevel compressionLevel)
         {
             _factory = factory;
-            _writer = writer;
+            _worksheetWriter = worksheetWriter;
+            _sharedStringsWriter = sharedStringsWriter;
+            _stylesWriter = stylesWriter;
             _templateStream = templateStream;
             _compressionStrategy = compressionStrategy;
             _compressionLevel = compressionLevel;
@@ -78,21 +87,9 @@ namespace LFEG
                     zip.CompressionLevel = _compressionLevel;
                     zip.Strategy = _compressionStrategy;
 
-                    zip.AddEntry("xl\\worksheets\\sheet.xml", (name, entryStream) =>
-                    {
-                        using (var writer = new StreamWriter(entryStream, Encoding.UTF8))
-                        {
-                            _writer.WriteXmlHeader(writer);
-                            _writer.WriteColumnsDefinitions(writer, columns);
-                            _writer.WriteSheetStart(writer);
-                            
-                            _writer.WriteTitleRow(writer, columns);
-                            _writer.WriteRows(writer, items, columns);
-                            
-                            _writer.WriteSheetEnd(writer);
-                            _writer.WriteXmlFooter(writer);
-                        }
-                    });
+                    _worksheetWriter.Write(zip, items, columns);
+                    _sharedStringsWriter.Write(zip);
+                    _stylesWriter.Write(zip);
 
                     zip.Save(outputStream);
                 }

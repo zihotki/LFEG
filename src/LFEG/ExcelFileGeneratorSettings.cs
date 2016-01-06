@@ -1,24 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using Ionic.Zlib;
-using LFEG.ExcelColumnDataInitializerVisitors;
+using LFEG.Infrastructure;
+using LFEG.Infrastructure.DataProviderVisitors;
+using LFEG.Infrastructure.Styling;
+using LFEG.Infrastructure.Writers;
 
 namespace LFEG
 {
     public class ExcelFileGeneratorSettings
     {
-        private readonly List<Func<IDataProviderVisitor>> _visitorFactories =
-            new List<Func<IDataProviderVisitor>>();
-
         private CompressionLevel _compressionLevel = CompressionLevel.Default;
         private CompressionStrategy _compressionStrategy = CompressionStrategy.Default;
         private IXmlEncoder _encoder = new XmlEncoder();
         private string _resourceName = "LFEG.Template.Output.zip";
         private Assembly _resourceAssembly = typeof (ExcelFileGeneratorSettings).Assembly;
         private Func<Stream> _templateStreamFactory;
+        private int _defaultCapacity = 100;
+        private string _numberFormat;
+        private string _booleanFormat;
+        private string _dateFormat = "dd-mmm-yyyy";
 
         public ExcelFileGeneratorSettings()
         {
@@ -29,7 +31,6 @@ namespace LFEG
         {
             return new ExcelFileGeneratorSettings();
         }
-
 
         public ExcelFileGeneratorSettings SetCompressionLevel(CompressionLevel compressionLevel)
         {
@@ -52,7 +53,7 @@ namespace LFEG
             return this;
         }
 
-        public ExcelFileGeneratorSettings SetResource(Assembly assembly, string resourceName)
+        public ExcelFileGeneratorSettings SetTemplate(Assembly assembly, string resourceName)
         {
             if (assembly == null)
                 throw new ArgumentNullException(nameof(assembly));
@@ -65,7 +66,7 @@ namespace LFEG
             return this;
         }
 
-        public ExcelFileGeneratorSettings SetTemplateStreamFactory(Func<Stream> templateStreamFactory)
+        public ExcelFileGeneratorSettings SetTemplate(Func<Stream> templateStreamFactory)
         {
             if (templateStreamFactory == null)
                 throw new ArgumentNullException(nameof(templateStreamFactory));
@@ -74,37 +75,59 @@ namespace LFEG
             return this;
         }
 
-        public ExcelFileGeneratorSettings AddColumnVisitor<T>()
-            where T : IDataProviderVisitor, new()
+        public ExcelFileGeneratorSettings SetSharedStringsInternerDefaultCapacity(int capacity)
         {
-            _visitorFactories.Add(() => new T());
+            _defaultCapacity = capacity;
             return this;
         }
 
-        public ExcelFileGeneratorSettings AddDefaultColumnVisitors()
+        public ExcelFileGeneratorSettings SetDefaultNumberFormat(string format)
         {
-            _visitorFactories.Add(() => new EnumDataProviderVisitor());
-            _visitorFactories.Add(() => new NumericDataProviderVisitor());
-            _visitorFactories.Add(() => new DefaultStringDataProviderVisitor());
+            _numberFormat = format;
+            return this;
+        }
 
+        public ExcelFileGeneratorSettings SetDefaultBooleanFormat(string format)
+        {
+            _booleanFormat = format;
+            return this;
+        }
+
+        public ExcelFileGeneratorSettings SetDefaultDateFormat(string format)
+        {
+            _dateFormat = format;
             return this;
         }
 
         public ExcelFileGenerator CreateGenerator()
         {
-            return new ExcelFileGenerator(CreateColumnFactory(), CreateWriter(),
-                _templateStreamFactory(), _compressionStrategy, _compressionLevel);
-        }
+            var sharedStringsInterner = new SharedStringsInterner(_defaultCapacity);
+            var styleProvider = new StyleProvider();
+            
+            var visitors = new IDataProviderVisitor[]
+            {
+                new EnumDataProviderVisitor(),
+                new NumericDataProviderVisitor(string.IsNullOrEmpty(_numberFormat)
+                    ? (int?) null
+                    : styleProvider.GetColumnStyle(_numberFormat)),
+                new DateTimeDataProviderVisitor(string.IsNullOrEmpty(_dateFormat)
+                    ? (int?) null
+                    : styleProvider.GetColumnStyle(_dateFormat)),
+                new BooleanDataProviderVisitor(string.IsNullOrEmpty(_booleanFormat)
+                    ? (int?) null
+                    : styleProvider.GetColumnStyle(_booleanFormat)),
+                new DefaultStringDataProviderVisitor()
+            };
+            
+            var columnFactory = new ExcelColumnFactory(visitors, styleProvider);
 
-        private ExcelWriter CreateWriter()
-        {
-            return new ExcelWriter(_encoder);
-        }
-
-        private ExcelColumnFactory CreateColumnFactory()
-        {
-            var visitors = _visitorFactories.Select(x => x()).ToArray();
-            return new ExcelColumnFactory(visitors);
+            return new ExcelFileGenerator(columnFactory,
+                new WorksheetWriter(_encoder, sharedStringsInterner),
+                new SharedStringsWriter(_encoder, sharedStringsInterner),
+                new StylesWriter(styleProvider),
+                _templateStreamFactory(),
+                _compressionStrategy,
+                _compressionLevel);
         }
     }
 }

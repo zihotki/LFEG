@@ -12,10 +12,7 @@ namespace LFEG.Sample
         private static void Main(string[] args)
         {
             // we can reuse settings so it's a good candidate to be put into DI container
-            var builder = ExcelFileGeneratorSettings.Create()
-                .AddDefaultColumnVisitors()
-                .AddColumnVisitor<BooleanYesNoDataProviderVisitor>()
-                .AddColumnVisitor<DateTimeDataProviderVisitor>();
+            var builder = ExcelFileGeneratorSettings.Create();
 
             var generator = builder.CreateGenerator();
 
@@ -38,16 +35,18 @@ namespace LFEG.Sample
 
         private static IEnumerable<Model> GenerateData()
         {
-            for (var i = 0; i < 1000000; i++)
+            for (var i = 0; i < 999; i++)
             {
                 yield return new Model
                 {
-                    Id = new Guid(),
-                    Title = "Title " + i,
-                    IsEnabled = i > 2000,
-                    Type = i > 1500 ? ModelType.AnotherOne : ModelType.One,
+                    Id = Guid.NewGuid(),
+                    TitleInline = "Title " + i%3,
+                    TitleShared = "Title " + i%3,
+                    IsEnabled = i%2 == 0,
+                    IsEnabled2 = i % 2 == 0,
+                    Type = i%2 == 1 ? ModelType.AnotherOne : ModelType.One,
                     UpdatedDate = DateTime.Now.AddDays(i),
-                    Width = i*i
+                    Width = i*i,
                 };
             }
         } 
@@ -55,9 +54,19 @@ namespace LFEG.Sample
 
     class Model
     {
+        [IgnoreExcelExport]
         public Guid Id { get; set; }
-        public string Title { get; set; }
+
+        [ExcelExport(Caption = "Title hello", Width = 40)]
+        public string TitleInline { get; set; }
+
+        [ExcelExport(Intern = true)]
+        public string TitleShared { get; set; }
+
+        [ExcelExport(DataFormat = "\"Yes\";;\"No\"")]
         public bool IsEnabled { get; set; }
+        
+        public bool IsEnabled2 { get; set; }
         public int Width { get; set; }
         public ModelType Type { get; set; }
         public DateTime UpdatedDate { get; set; }

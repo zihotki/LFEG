@@ -1,0 +1,26 @@
+﻿{
+    "version": "1.0.0.0",
+    "description": "LFEG Class Library",
+    "authors": [ "zihotki" ],
+    "tags": [ "excel report generator", "export to excel" ],
+    "projectUrl": "https://github.com/zihotki/LFEG",
+    "licenseUrl": "http://opensource.org/licenses/MIT",
+
+    "frameworks": {
+        "net45": {
+            "dependencies": {
+                "System.Collections": "4.0.0",
+                "System.Linq": "4.0.0",
+                "System.Runtime": "4.0.0",
+                "DotNetZip": "1.9.7"
+            },
+            "frameworkAssemblies": {
+                "System.Data": "4.0.0.0",
+                "System.Xml": "4.0.0.0"
+            }
+        }
+    },
+    "resource": [
+        "Template/Output.zip"
+    ]
+}
