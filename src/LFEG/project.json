@@ -1,10 +1,13 @@
 ﻿{
-    "version": "1.0.0.0",
-    "description": "LFEG Class Library",
+    "version": "1.0.1",
+    "title": "Lighting Fast Excel Generator",
+    "description": "Lighting Fast Excel Generator, a small library which allows to generate simple excel files in fast and efficient way even if you have up to million of rows (that's a limit for one Excel tab)",
+    "summary": "Lighting Fast Excel Generator, a small library which allows to generate simple excel files in fast and efficient way even if you have up to million of rows (that's a limit for one Excel tab)",
     "authors": [ "zihotki" ],
-    "tags": [ "excel report generator", "export to excel" ],
+    "tags": [ "excel export", "report generator" ],
     "projectUrl": "https://github.com/zihotki/LFEG",
     "licenseUrl": "http://opensource.org/licenses/MIT",
+    "releaseNotes": "Added documentation for ExcelExportAttribute and ExcelFileGenerator classes.",
 
     "frameworks": {
         "net45": {
