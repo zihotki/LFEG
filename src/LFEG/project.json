@@ -1,5 +1,5 @@
 ﻿{
-    "version": "1.0.1",
+    "version": "1.0.2",
     "title": "Lighting Fast Excel Generator",
     "description": "Lighting Fast Excel Generator, a small library which allows to generate simple excel files in fast and efficient way even if you have up to million of rows (that's a limit for one Excel tab)",
     "summary": "Lighting Fast Excel Generator, a small library which allows to generate simple excel files in fast and efficient way even if you have up to million of rows (that's a limit for one Excel tab)",
@@ -12,14 +12,14 @@
     "frameworks": {
         "net45": {
             "dependencies": {
-                "System.Collections": "4.0.0",
-                "System.Linq": "4.0.0",
-                "System.Runtime": "4.0.0",
                 "DotNetZip": "1.9.7"
             },
             "frameworkAssemblies": {
                 "System.Data": "4.0.0.0",
-                "System.Xml": "4.0.0.0"
+                "System.Xml": "4.0.0.0",
+                "System.Collections": "4.0.0.0",
+                "System.Linq": "4.0.0.0",
+                "System.Runtime": "4.0.0.0"
             }
         }
     },
