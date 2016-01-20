@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.IO;
 using System.Reflection;
 using Ionic.Zlib;
@@ -6,6 +7,8 @@ using LFEG.Infrastructure;
 using LFEG.Infrastructure.DataProviderVisitors;
 using LFEG.Infrastructure.Styling;
 using LFEG.Infrastructure.Writers;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace LFEG
 {
@@ -16,11 +19,13 @@ namespace LFEG
         private IXmlEncoder _encoder = new XmlEncoder();
         private string _resourceName = "LFEG.Template.Output.zip";
         private Assembly _resourceAssembly = typeof (ExcelFileGeneratorSettings).Assembly;
+        private Func<IEnumerable<PropertyInfo>, IEnumerable<PropertyInfo>> _propertiesFilter = null;
         private Func<Stream> _templateStreamFactory;
         private int _defaultCapacity = 100;
         private string _numberFormat;
         private string _booleanFormat;
         private string _dateFormat = "dd-mmm-yyyy";
+        private bool _throwOnLimit = false;
 
         public ExcelFileGeneratorSettings()
         {
@@ -152,6 +157,24 @@ namespace LFEG
             return this;
         }
 
+        /// <summary>
+        /// Sets additional DTO properties filter. Using this setting you can remove from export some additional properties, 
+        /// for example - the ones marked as [ScaffoldColumn(false)]
+        /// </summary>
+        /// <param name="filter">Properties filter</param>
+        /// <returns>Settings</returns>
+        public ExcelFileGeneratorSettings SetDtoPropertiesFilter(Func<IEnumerable<PropertyInfo>, IEnumerable<PropertyInfo>> filter)
+        {
+            _propertiesFilter = filter;
+            return this;
+        }
+
+        public ExcelFileGeneratorSettings ThrowOnValueLengthExceedsExcelLimit()
+        {
+            _throwOnLimit = true;
+            return this;
+        }
+
 
         /// <summary>
         /// Creates a new instance of a generator.
@@ -174,7 +197,7 @@ namespace LFEG
                 new BooleanDataProviderVisitor(string.IsNullOrEmpty(_booleanFormat)
                     ? (int?) null
                     : styleProvider.GetColumnStyle(_booleanFormat)),
-                new DefaultStringDataProviderVisitor()
+                new DefaultStringDataProviderVisitor(_throwOnLimit)
             };
             
             var columnFactory = new ExcelColumnFactory(visitors, styleProvider);
@@ -185,7 +208,8 @@ namespace LFEG
                 new StylesWriter(styleProvider),
                 _templateStreamFactory(),
                 _compressionStrategy,
-                _compressionLevel);
+                _compressionLevel,
+                _propertiesFilter);
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using Ionic.Zip;
 using Ionic.Zlib;
 using LFEG.Infrastructure;
@@ -18,6 +19,7 @@ namespace LFEG
         private readonly Stream _templateStream;
         private readonly CompressionStrategy _compressionStrategy;
         private readonly CompressionLevel _compressionLevel;
+        private readonly Func<IEnumerable<PropertyInfo>, IEnumerable<PropertyInfo>> _propertiesFilter;
         private readonly ExcelColumnFactory _factory;
 
         public ExcelFileGenerator(ExcelColumnFactory factory, 
@@ -26,7 +28,8 @@ namespace LFEG
             IStylesWriter stylesWriter,
             Stream templateStream, 
             CompressionStrategy compressionStrategy, 
-            CompressionLevel compressionLevel)
+            CompressionLevel compressionLevel,
+            Func<IEnumerable<PropertyInfo>, IEnumerable<PropertyInfo>> propertiesFilter)
         {
             _factory = factory;
             _worksheetWriter = worksheetWriter;
@@ -35,6 +38,7 @@ namespace LFEG
             _templateStream = templateStream;
             _compressionStrategy = compressionStrategy;
             _compressionLevel = compressionLevel;
+            _propertiesFilter = propertiesFilter;
         }
 
         
@@ -105,9 +109,15 @@ namespace LFEG
 
         protected virtual ExcelColumn<T>[] GetColumns<T>()
         {
-            var cols = typeof(T).GetProperties()
-                .Where(x => Attribute.GetCustomAttribute(x, typeof(IgnoreExcelExportAttribute), false) == null)
-                .Select(x => _factory.CreatePropertyColumn<T>(x))
+            var props = typeof (T).GetProperties()
+                .Where(x => Attribute.GetCustomAttribute(x, typeof(IgnoreExcelExportAttribute), false) == null);
+
+            if (_propertiesFilter != null)
+            {
+                props = _propertiesFilter(props);
+            }
+
+            var cols = props.Select(x => _factory.CreatePropertyColumn<T>(x))
                 .ToArray();
 
             return cols;
