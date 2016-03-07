@@ -1,4 +1,4 @@
-# LFEG - Lighitng Fast Excel Generator
+# LFEG - Lightning Fast Excel Generator
 
 The library was built to generate big excel reports which don't need fancy formatting or any formulas. It can be compared to export to CSV but if you need that data to open in Excel and do something with that data (sort, aggregate), it will be very helpful to have correct column data types but CSV doesn't have types, everythin there is actually a string.
 
